@@ -1,5 +1,5 @@
 import {
-  IsDecimal,
+  IsNumber,
   IsPositive,
   IsString,
   IsUUID,
@@ -11,7 +11,7 @@ export class CreateProductDto {
   @MinLength(5)
   name: string;
 
-  @IsDecimal()
+  @IsNumber()
   @IsPositive()
   price: number;
 

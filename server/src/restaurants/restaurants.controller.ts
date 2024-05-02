@@ -25,6 +25,11 @@ export class RestaurantsController {
     return await this.restaurantsService.findAll();
   }
 
+  @Get('/:id/products')
+  async findProductsByRestaurant(@Param('id') id: string) {
+    return await this.restaurantsService.findProductsByRestaurant(id);
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return await this.restaurantsService.findOne(id);
