@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { DataSourceConfig } from './config/data.source';
 
 @Module({
-  imports: [],
+  imports: [TypeOrmModule.forRoot(DataSourceConfig)],
   controllers: [],
   providers: [],
 })
