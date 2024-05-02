@@ -1,9 +1,9 @@
 version: '3.1'
 
 services:
-  db_postgresql:
+  postgresql:
     image: postgres:16.2
-    container_name: db_restaurants
+    container_name: postgresql_db
     restart: always
     environment:
       - POSTGRES_DB=db_restaurants
