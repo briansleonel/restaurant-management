@@ -11,6 +11,9 @@ export class ProductEntity extends BaseEntity {
   @Column({ type: 'decimal' })
   price: number;
 
+  @Column({ nullable: true })
+  image: string;
+
   @ManyToOne(() => RestaurantEntity, (restaurant) => restaurant.id)
   restaurant: RestaurantEntity;
 

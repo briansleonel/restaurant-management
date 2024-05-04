@@ -10,6 +10,9 @@ export class RestaurantEntity extends BaseEntity {
   @Column()
   description: string;
 
+  @Column({ nullable: true })
+  image: string;
+
   @OneToMany(() => ProductEntity, (product) => product.restaurant)
   products: Array<ProductEntity>;
 }
