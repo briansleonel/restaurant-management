@@ -1,11 +1,30 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreateOrdersDetailDto } from './dto/create-orders-detail.dto';
 import { UpdateOrdersDetailDto } from './dto/update-orders-detail.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { OrdersDetailEntity } from './entities/orders-detail.entity';
+import { Repository } from 'typeorm';
+import { ProductsService } from 'src/products/products.service';
 
 @Injectable()
 export class OrdersDetailsService {
-  create(createOrdersDetailDto: CreateOrdersDetailDto) {
-    return 'This action adds a new ordersDetail';
+  constructor(
+    @InjectRepository(OrdersDetailEntity)
+    private readonly orderDetailsRepository: Repository<OrdersDetailEntity>,
+    @Inject(ProductsService)
+    private readonly productService: ProductsService,
+  ) {}
+
+  async create(createOrdersDetailDto: CreateOrdersDetailDto) {
+    const { items, product } = createOrdersDetailDto;
+
+    const detailEntity = new OrdersDetailEntity();
+
+    detailEntity.product = await this.productService.findOne(product);
+    detailEntity.items = items;
+    detailEntity.subTotal = detailEntity.product.price * items;
+
+    return await this.orderDetailsRepository.save(detailEntity);
   }
 
   findAll() {

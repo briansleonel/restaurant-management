@@ -1,4 +1,9 @@
-import { BadRequestException, Inject, Injectable, forwardRef } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  forwardRef,
+} from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -42,7 +47,10 @@ export class ProductsService {
 
   async findAllByRestaurant(id: string) {
     try {
-      return await this.productRepository.findBy({ restaurant: { id } });
+      return await this.productRepository.find({
+        where: { restaurant: { id } },
+        relations: ['restaurant'],
+      });
     } catch (error) {
       throw new BadRequestException(error.message);
     }

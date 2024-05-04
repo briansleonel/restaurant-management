@@ -1,6 +1,7 @@
 import { BaseEntity } from 'src/config/base.entity';
+import { OrdersDetailEntity } from 'src/orders-details/entities/orders-detail.entity';
 import { RestaurantEntity } from 'src/restaurants/entities/restaurant.entity';
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity({ name: 'products' })
 export class ProductEntity extends BaseEntity {
@@ -12,4 +13,7 @@ export class ProductEntity extends BaseEntity {
 
   @ManyToOne(() => RestaurantEntity, (restaurant) => restaurant.id)
   restaurant: RestaurantEntity;
+
+  @OneToMany(() => OrdersDetailEntity, (detail) => detail.product)
+  orderDetails: Array<OrdersDetailEntity>;
 }

@@ -7,6 +7,9 @@ export class RestaurantEntity extends BaseEntity {
   @Column()
   name: string;
 
+  @Column()
+  description: string;
+
   @OneToMany(() => ProductEntity, (product) => product.restaurant)
   products: Array<ProductEntity>;
 }
