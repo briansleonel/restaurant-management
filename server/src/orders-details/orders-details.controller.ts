@@ -1,17 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { OrdersDetailsService } from './orders-details.service';
-import { CreateOrdersDetailDto } from './dto/create-orders-detail.dto';
-import { UpdateOrdersDetailDto } from './dto/update-orders-detail.dto';
+import { Controller } from '@nestjs/common';
 
 @Controller('orders-details')
 export class OrdersDetailsController {
+  /*
   constructor(private readonly ordersDetailsService: OrdersDetailsService) {}
 
   @Post()
   create(@Body() createOrdersDetailDto: CreateOrdersDetailDto) {
     return this.ordersDetailsService.create(createOrdersDetailDto);
   }
-
+  
   @Get()
   findAll() {
     return this.ordersDetailsService.findAll();
@@ -31,4 +29,5 @@ export class OrdersDetailsController {
   remove(@Param('id') id: string) {
     return this.ordersDetailsService.remove(+id);
   }
+  */
 }

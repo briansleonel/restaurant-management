@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CreateOrdersDetailDto } from './dto/create-orders-detail.dto';
-import { UpdateOrdersDetailDto } from './dto/update-orders-detail.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OrdersDetailEntity } from './entities/orders-detail.entity';
 import { Repository } from 'typeorm';
@@ -27,6 +26,7 @@ export class OrdersDetailsService {
     return await this.orderDetailsRepository.save(detailEntity);
   }
 
+  /*
   findAll() {
     return `This action returns all ordersDetails`;
   }
@@ -42,4 +42,5 @@ export class OrdersDetailsService {
   remove(id: number) {
     return `This action removes a #${id} ordersDetail`;
   }
+  */
 }
