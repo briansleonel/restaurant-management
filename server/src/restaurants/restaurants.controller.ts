@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { RestaurantsService } from './restaurants.service';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
@@ -21,13 +23,33 @@ export class RestaurantsController {
   }
 
   @Get()
+  async findAllPagination(@Query('page', ParseIntPipe) page?: number) {
+    if (!page || page === 0) {
+      page = 1; // Establecer la página 1 como valor predeterminado
+    }
+
+    return await this.restaurantsService.findAllPagination(page);
+  }
+
+  @Get('/all')
   async findAll() {
     return await this.restaurantsService.findAll();
   }
 
   @Get('/:id/products')
-  async findProductsByRestaurant(@Param('id') id: string) {
+  async findProductsByRestaurant(
+    @Param('id') id: string,
+    @Query('page', ParseIntPipe) page?: number,
+  ) {
+    if (!page || page === 0) {
+      page = 1; // Establecer la página 1 como valor predeterminado
+    }
     return await this.restaurantsService.findProductsByRestaurant(id);
+  }
+
+  @Get('/:id/orders')
+  async findOrdersByRestaurant(@Param('id') id: string) {
+    return await this.restaurantsService.findOrdersByRestaurant(id);
   }
 
   @Get(':id')

@@ -8,4 +8,7 @@ export class CreateRestaurantDto {
   @IsString()
   @MinLength(20)
   description: string;
+
+  @IsString()
+  image: string;
 }

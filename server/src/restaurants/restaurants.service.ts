@@ -10,6 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RestaurantEntity } from './entities/restaurant.entity';
 import { ProductsService } from 'src/products/products.service';
+import { OrdersService } from 'src/orders/orders.service';
 
 @Injectable()
 export class RestaurantsService {
@@ -18,6 +19,8 @@ export class RestaurantsService {
     private readonly restaurantRepository: Repository<RestaurantEntity>,
     @Inject(forwardRef(() => ProductsService))
     private readonly productsService: ProductsService,
+    @Inject(forwardRef(() => OrdersService))
+    private readonly ordersService: OrdersService,
   ) {}
 
   async create(createRestaurantDto: CreateRestaurantDto) {
@@ -34,12 +37,30 @@ export class RestaurantsService {
     }
   }
 
+  async findAllPagination(page: number = 1, limit: number = 10) {
+    const skip = (page - 1) * limit;
+    const restaurants = await this.restaurantRepository.find({
+      skip,
+      take: limit,
+      order: { createdAt: { direction: 'ASC' } },
+    });
+
+    const hasMore = restaurants.length === limit;
+    return { restaurants, hasMore };
+  }
+
   async findAll() {
-    return await this.restaurantRepository.find();
+    return await this.restaurantRepository.find({
+      order: { createdAt: { direction: 'ASC' } },
+    });
   }
 
   async findProductsByRestaurant(id: string) {
     return await this.productsService.findAllByRestaurant(id);
+  }
+
+  async findOrdersByRestaurant(id: string) {
+    return await this.ordersService.findAllByRestaurant(id);
   }
 
   async findOne(id: string) {
