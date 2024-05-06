@@ -1,49 +1,50 @@
-import MainContainer from "../components/Layout/MainContainer";
-import { __instanceAxios } from "../config/axios.config";
-import CardsContainer from "../components/Layout/CardsContainer";
-import Title from "antd/es/typography/Title";
-import { Card, Select, Skeleton } from "antd";
 import { useEffect, useState } from "react";
-import { IProduct } from "../types/product";
-import { SearchProps } from "antd/es/input";
-import Search from "antd/es/input/Search";
+import { __instanceAxios } from "../config/axios.config";
+import Title from "antd/es/typography/Title";
+import { Button, Card, Skeleton, message } from "antd";
+import MainContainer from "../components/Layout/MainContainer";
+import CardsContainer from "../components/Layout/CardsContainer";
 import Meta from "antd/es/card/Meta";
+import { useNavigate, useParams } from "react-router-dom";
+import { IProduct } from "../types/product";
+import { setOpenDrawer } from "../store/features/drawer.slice";
+import { addOrderDetail } from "../store/features/order.slice";
+import { IOrderDetail } from "../types/order-details";
+import { useAppDispatch } from "../store/hooks.redux";
 
-function ProductsPage() {
-    const [loadingRestaurants, setLoadingRestaurants] = useState(true);
-    const [restaurants, setRestaurants] = useState<Array<IRestaurant>>();
+function RestaurantProductsPage() {
+    const { restaurantId } = useParams();
+    const navigate = useNavigate();
+
+    const dispatch = useAppDispatch();
 
     const [loading, setLoading] = useState(true);
     const [products, setProducts] = useState<Array<IProduct>>();
 
-    const [selectedRestaurant, setSelectedRestaurant] = useState<string>();
+    const [messageApi, contextHolder] = message.useMessage();
 
-    const handleChange = (e: string) => {
-        setSelectedRestaurant(e);
-        setLoading(true);
-        setProducts([]);
+    const addProduct = (product: IProduct) => {
+        const orderDetail: IOrderDetail = {
+            items: 1,
+            product,
+            subTotal: +product.price,
+        };
+
+        dispatch(addOrderDetail(orderDetail));
+        dispatch(setOpenDrawer(true));
+
+        messageApi.open({
+            type: "success",
+            content: "Product added to order",
+            duration: 5,
+        });
     };
-
-    const onSearch: SearchProps["onSearch"] = (value, _e, info) =>
-        console.log(info?.source, value);
-
-    useEffect(() => {
-        async function getRestaurants() {
-            await __instanceAxios.get("/restaurants/all").then(({ data }) => {
-                setRestaurants(data as Array<IRestaurant>);
-                setLoadingRestaurants(false);
-                setSelectedRestaurant(data[0].id);
-            });
-        }
-
-        getRestaurants();
-    }, []);
 
     useEffect(() => {
         async function getProducts() {
-            if (selectedRestaurant)
+            if (restaurantId)
                 await __instanceAxios
-                    .get(`/restaurants/${selectedRestaurant}/products`)
+                    .get(`/restaurants/${restaurantId}/products`)
                     .then(({ data }) => {
                         setProducts(data as Array<IProduct>);
                         setLoading(false);
@@ -51,38 +52,27 @@ function ProductsPage() {
         }
 
         getProducts();
-    }, [selectedRestaurant]);
+    }, [restaurantId]);
 
     return (
         <>
+            {contextHolder}
             <MainContainer>
                 <Title level={1} className="text-center !mb-0">
                     Products
                 </Title>
 
-                {restaurants ? (
-                    <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-center justify-start md:gap-8">
-                        <div className="col-span-1 md:col-span-2 flex-col flex md:flex-row gap-2 md:gap-4 items-start md:items-center justify-start">
-                            <span className="text-start">Restaurant:</span>
-                            <Select
-                                defaultValue={selectedRestaurant}
-                                onChange={handleChange}
-                                options={restaurants.map((r) => {
-                                    return { value: r.id, label: r.name };
-                                })}
-                                loading={loadingRestaurants}
-                                className="w-full"
-                            />
-                        </div>
-                        <Search
-                            className="col-span-1 md:col-span-4"
-                            placeholder="input search text"
-                            onSearch={onSearch}
-                            enterButton
-                            allowClear
-                        />
-                    </div>
-                ) : null}
+                <div className="flex gap-8 justify-end">
+                    <Button
+                        type="default"
+                        onClick={() =>
+                            navigate(`/restaurants/${restaurantId}/orders`)
+                        }
+                        className="w-full md:w-fit"
+                    >
+                        Show orders
+                    </Button>
+                </div>
 
                 {loading ? (
                     <CardsContainer>
@@ -111,15 +101,13 @@ function ProductsPage() {
                                         <span className="w-fit font-semibold text-orange-500 bg-orange-50/80 border border-orange-200 rounded px-4 py-1">
                                             ${product.price}
                                         </span>
-                                        {/**
-                                         <Button
+                                        <Button
                                             className="w-full lg:w-fit"
                                             type="primary"
                                             onClick={() => addProduct(product)}
                                         >
                                             Add to order
                                         </Button>
-                                         */}
                                     </div>
                                 </Card>
                             ))
@@ -135,4 +123,4 @@ function ProductsPage() {
     );
 }
 
-export default ProductsPage;
+export default RestaurantProductsPage;

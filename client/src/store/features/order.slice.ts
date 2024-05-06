@@ -19,8 +19,19 @@ const orderSlice = createSlice({
     initialState,
     reducers: {
         addOrderDetail: function (state, action: PayloadAction<IOrderDetail>) {
-            state.details.push(action.payload);
-            state.amount += action.payload.subTotal;
+            let exist = false;
+            // verifico si ya existe el producto a agregar
+            state.details.forEach((d) => {
+                if (d.product.id === action.payload.product.id) {
+                    ++d.items;
+                    d.subTotal = d.items * action.payload.product.price;
+                    exist = true;
+                }
+            });
+            if (!exist) {
+                state.details.push(action.payload);
+                state.amount += action.payload.subTotal;
+            }
         },
         updateNumberItemsOrderDetail: function (
             state,
@@ -45,9 +56,26 @@ const orderSlice = createSlice({
             state,
             action: PayloadAction<IOrderDetail>
         ) {
-            const updated = state.details.filter((o) => o !== action.payload);
+            console.log(action.payload);
+
+            const updated = state.details.filter(
+                (o) => o.product.id !== action.payload.product.id
+            );
+            console.log(updated);
 
             state.details = updated;
+
+            let amount = 0;
+            state.details.forEach((d) => {
+                amount += d.subTotal;
+            });
+
+            state.amount = amount;
+        },
+        resetOrder: function (state) {
+            state.description = "";
+            state.amount = 0;
+            state.details = [];
         },
     },
 });
@@ -56,6 +84,7 @@ export const {
     addOrderDetail,
     updateNumberItemsOrderDetail,
     deleteOrderDetail,
+    resetOrder,
 } = orderSlice.actions;
 
 export default orderSlice.reducer;

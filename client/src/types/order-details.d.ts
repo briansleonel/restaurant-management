@@ -6,6 +6,10 @@ export interface IOrderDetail {
     subTotal: number;
 }
 
+export interface IOrderDetailWithProductId extends IOrderDetail {
+    product: string;
+}
+
 export interface IOrderDetailWithId extends IOrderDetail {
     id: string;
 }

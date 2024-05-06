@@ -5,7 +5,7 @@ import { NavLink } from "react-router-dom";
 import DrawerOrder from "../Drawer/Drawer";
 
 const navigation = [
-    { name: "Home", href: "/" },
+    //{ name: "Home", href: "/" },
     { name: "Restaurants", href: "/restaurants" },
     { name: "Products", href: "/products" },
 ];
